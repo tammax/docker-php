@@ -1,0 +1,29 @@
+version: '3'
+services:
+  php:
+    build:
+      context: .
+      dockerfile: ./docker/php/DockerFile
+    volumes:
+      - ./src:/var/www/html
+      - ./conf.d/php:/usr/local/etc/php/conf.d
+  nginx:
+    build:
+      context: .
+      dockerfile: ./docker/nginx/DockerFile
+    volumes:
+      - ./src:/var/www/html
+      - ./conf.d/nginx:/etc/nginx/conf.d/
+    ports:
+      - 80:80
+    depends_on:
+      - php
+  composer:
+    build:
+      context: .
+      dockerfile: ./docker/composer/DockerFile
+    command: 'composer install'
+    volumes:
+      - ./src:/app
+    depends_on:
+      - php
